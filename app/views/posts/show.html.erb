@@ -1,0 +1,42 @@
+<h1><%= @post.title %></h1>
+<p><%= @post.body %></p>
+
+<p class="post-info">
+  <small>Posted by: <%= @post.user.email %></small>
+  <% if @post.user == current_user %>
+    <%= link_to 'Edit Post', edit_post_path(@post), class: 'btn btn-primary btn-sm' %>
+    <%= link_to 'Delete Post', post_path(@post), class: 'btn btn-primary btn-sm', method: :delete, data: { confirm: 'Are you sure?' } %>
+  <% end %>
+</p>
+
+<h3>Comments</h3>
+
+<% if @post.comments.any? %>
+  <% @post.comments.each do |comment| %>
+    <div class="comment">
+      <p><%= comment.body %></p>
+      <p class="comment-info">
+        <small>Commented by: <%= comment.user.email %></small>
+        <% if comment.user == current_user %>
+          <%= link_to 'Delete Comment', post_comment_path(comment), class: 'btn btn-primary btn-sm', method: :delete, data: { confirm: 'Are you sure?' } %>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+<% else %>
+  <p class="no-comments">No comments yet.</p>
+<% end %>
+
+<% if user_signed_in? %>
+  <h4>Add a new comment</h4>
+  <%= form_with(model: [@post, Comment.new]) do |form| %>
+    <div class="form-group">
+      <%= form.label :body %>
+      <%= form.text_field :body, class: 'form-control' %>
+    </div>
+
+    <div>
+      <%= form.submit "Add Comment", class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+<% end %>
